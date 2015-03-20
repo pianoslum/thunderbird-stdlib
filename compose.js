@@ -248,7 +248,7 @@ function simpleWrap(txt, width) {
 
   let lines = txt.split(/\r?\n/);
 
-  for each (let [i, line] in Iterator(lines)) {
+  for (let [i, line] of Iterator(lines)) {
     if (line.length > width && line[0] != ">")
       lines[i] = splitLongLine([], line);
   }
@@ -299,7 +299,7 @@ function plainTextToHtml(txt) {
   let lines = txt.split(/\r?\n/);
   let newLines = [];
   let level = 0;
-  for each (let [, line] in Iterator(lines)) {
+  for (let [, line] of Iterator(lines)) {
     let newLevel = citeLevel(line);
     if (newLevel > level)
       for (let i = level; i < newLevel; ++i)
@@ -344,15 +344,15 @@ function replyAllParams(aIdentity, aMsgHdr, k) {
   let [bccList, bccListEmailAddresses] = parse(aMsgHdr.bccList);
   authorEmailAddress = authorEmailAddress.toLowerCase();
   recipientsEmailAddresses = [x.toLowerCase()
-    for each ([, x] in Iterator(recipientsEmailAddresses))];
-  ccListEmailAddresses = [x.toLowerCase() for each ([, x] in Iterator(ccListEmailAddresses))];
-  bccListEmailAddresses = [x.toLowerCase() for each ([, x] in Iterator(bccListEmailAddresses))];
+    for ([, x] of Iterator(recipientsEmailAddresses))];
+  ccListEmailAddresses = [x.toLowerCase() for ([, x] of Iterator(ccListEmailAddresses))];
+  bccListEmailAddresses = [x.toLowerCase() for ([, x] of Iterator(bccListEmailAddresses))];
   let identity = aIdentity;
   let identityEmail = identity.email.toLowerCase();
   let to = [], cc = [], bcc = [];
 
   let isReplyToOwnMsg = false;
-  for each (let currentIdentity in getIdentities()) {
+  for (let currentIdentity of getIdentities()) {
     let email = currentIdentity.identity.email.toLowerCase();
     if (email == authorEmailAddress)
       isReplyToOwnMsg = true;
@@ -366,24 +366,24 @@ function replyAllParams(aIdentity, aMsgHdr, k) {
   //  wants to really use reply anyway ;-)
   if (isReplyToOwnMsg) {
     to = [[r, recipientsEmailAddresses[i]]
-      for each ([i, r] in Iterator(recipients))];
+      for ([i, r] of Iterator(recipients))];
   } else {
     to = [[author, authorEmailAddress]];
   }
   cc = [[cc, ccListEmailAddresses[i]]
-    for each ([i, cc] in Iterator(ccList))
+    for ([i, cc] of Iterator(ccList))
     if (ccListEmailAddresses[i] != identityEmail)];
   if (!isReplyToOwnMsg)
     cc = cc.concat
       ([[r, recipientsEmailAddresses[i]]
-        for each ([i, r] in Iterator(recipients))
+        for ([i, r] of Iterator(recipients))
         if (recipientsEmailAddresses[i] != identityEmail)]);
   bcc = [[bcc, bccListEmailAddresses[i]]
-    for each ([i, bcc] in Iterator(bccList))];
+    for ([i, bcc] of Iterator(bccList))];
 
   let finish = function (to, cc, bcc) {
     let hashMap = {};
-    for each (let [name, email] in to)
+    for (let [name, email] of to)
       hashMap[email] = null;
     cc = cc.filter(function ([name, email])
       let (r = (email in hashMap))
@@ -402,7 +402,7 @@ function replyAllParams(aIdentity, aMsgHdr, k) {
   msgHdrGetHeaders(aMsgHdr, function (aHeaders) {
     if (aHeaders.has("reply-to")) {
       let [names, emails] = parse(aHeaders.get("reply-to"));
-      emails = [email.toLowerCase() for each (email in emails)];
+      emails = [email.toLowerCase() for (email of emails)];
       if (emails.length) {
         // Invariant: at this stage, we only have one item in to.
         cc = cc.concat([to[0]]); // move the to in cc

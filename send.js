@@ -253,7 +253,7 @@ function sendMessage(aParams,
       Log.assert(urls.length == 1, "Can't edit more than one message at a time");
       let msgHdr = msgUriToMsgHdr(urls[0]);
       references = [msgHdr.getStringReference(i)
-        for each (i in range(0, msgHdr.numReferences))];
+        for (i of range(0, msgHdr.numReferences))];
       break;
     }
 
@@ -267,13 +267,13 @@ function sendMessage(aParams,
       Log.assert(urls.length == 1, "Can't reply to more than one message at a time");
       let msgHdr = msgUriToMsgHdr(urls[0]);
       references = [msgHdr.getStringReference(i)
-        for each (i in range(0, msgHdr.numReferences))];
+        for (i of range(0, msgHdr.numReferences))];
       references.push(msgHdr.messageId);
       break;
     }
 
     case mCompType.ForwardAsAttachment: {
-      for each (let [, url] in Iterator(urls)) {
+      for (let [, url] of Iterator(urls)) {
         let msgHdr = msgUriToMsgHdr(url);
         references.push(msgHdr.messageId);
       }
@@ -287,9 +287,9 @@ function sendMessage(aParams,
       break;
     }
   }
-  references = ["<"+x+">" for each ([, x] in Iterator(references))];
+  references = ["<"+x+">" for ([, x] of Iterator(references))];
   fields.references = references.join(" ");
-  [fields.addAttachment(x) for each ([, x] in Iterator(attachments))];
+  [fields.addAttachment(x) for ([, x] of Iterator(attachments))];
 
   let fccFolder = identity.fccFolder;
   let fccSameFolder = identity.fccReplyFollowsParent;

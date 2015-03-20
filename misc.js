@@ -149,7 +149,7 @@ function fillIdentities(aSkipNntp) {
   Log.warn("fillIdentities is deprecated! Use getIdentities instead!");
   Log.debug("Filling identities with skipnntp = ", aSkipNntp);
 
-  for each (let currentIdentity in getIdentities(aSkipNntp)) {
+  for (let currentIdentity of getIdentities(aSkipNntp)) {
     gIdentities[currentIdentity.identity.email] = currentIdentity.identity;
     if (currentIdentity.isDefault) {
       gIdentities["default"] = currentIdentity.identity;
@@ -176,12 +176,12 @@ function getDefaultIdentity() {
  */
 function getIdentities(aSkipNntpIdentities = true) {
   let identities = [];
-  for each (let account in fixIterator(MailServices.accounts.accounts, Ci.nsIMsgAccount)) {
+  for (let account of fixIterator(MailServices.accounts.accounts, Ci.nsIMsgAccount)) {
     let server = account.incomingServer;
     if (aSkipNntpIdentities && (!server || server.type != "pop3" && server.type != "imap")) {
       continue;
     }
-    for each (let currentIdentity in fixIterator(account.identities, Ci.nsIMsgIdentity)) {
+    for (let currentIdentity of fixIterator(account.identities, Ci.nsIMsgIdentity)) {
       // We're only interested in identities that have a real email.
       if (currentIdentity.email) {
         identities.push({ isDefault: (currentIdentity == MailServices.accounts.defaultAccount.defaultIdentity), identity: currentIdentity });
@@ -276,7 +276,7 @@ function parseMimeLine (aMimeLine, aDontFix) {
                                                                      fullNames);
   if (numAddresses)
     return [{ email: emails.value[i], name: names.value[i], fullName: fullNames.value[i] }
-      for each (i in range(0, numAddresses))];
+      for (i of range(0, numAddresses))];
   else if (aDontFix)
     return [];
   else
@@ -291,7 +291,7 @@ function parseMimeLine (aMimeLine, aDontFix) {
  */
 function encodeUrlParameters(aObj) {
   let kv = [];
-  for each (let [k, v] in Iterator(aObj)) {
+  for (let [k, v] of Iterator(aObj)) {
     kv.push(k+"="+encodeURIComponent(v));
   }
   return kv.join("&");
@@ -309,7 +309,7 @@ function decodeUrlParameters(aStr) {
   if (i >= 0) {
     let query = aStr.substring(i+1, aStr.length);
     let keyVals = query.split("&");
-    for each (let [, keyVal] in Iterator(keyVals)) {
+    for (let [, keyVal] of Iterator(keyVals)) {
       let [key, val] = keyVal.split("=");
       val = decodeURIComponent(val);
       params[key] = val;
@@ -351,5 +351,5 @@ function systemCharset() {
 function combine(a1, a2) {
   if (a1.length != a2.length)
     throw new Error("combine: the given arrays have different lengths");
-  return [[a1[i], a2[i]] for each (i in range(0, a1.length))];
+  return [[a1[i], a2[i]] for (i of range(0, a1.length))];
 }
